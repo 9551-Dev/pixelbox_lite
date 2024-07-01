@@ -27,7 +27,7 @@ Here you can see the same terminal resolution (default computer: 51x19 chars) be
 ### Installation
 Installing is a very simple as its just a singular file
 ```
-wget https://raw.githubusercontent.com/9551-Dev/pixelbox_lite/master/common/pixelbox_lite.lua
+wget https://raw.githubusercontent.com/9551-Dev/pixelbox_lite/master/pixelbox_lite.lua
 ```
 
 ## Basic usage
