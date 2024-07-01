@@ -19,6 +19,11 @@ Its main objective is to be
 
 With pixelbox lite you can technically get 6x more pixels out of your terminal, each character can now be a block of 3x2 chars
 
+Here you can see the same terminal resolution (default computer: 51x19 chars) being filled with random colors, without and with pixelbox
+
+![](assets/random_base.png)
+![](assets/random_pixelbox.png)
+
 ### Installation
 Installing is a very simple as its just a singular file
 ```
@@ -153,6 +158,19 @@ box:set_canvas(usable_canvas)
 box:render()
 ```
 You could also just use an empty table instead of `pixelbox.make_canvas` but that wont have protection against writing outside of bounds. Thats why i rather recommend passing in a source_table to it
+
 ---
+## Some stuff made with Pixelbox
+![](assets/examples/isometrih.png)
+![](assets/examples/fractal3.png)
+![](assets/examples/fractal2.png)
+![](assets/examples/render.png)
+![](assets/examples/fractal1.png)
+![](assets/examples/img1.png)
+![](assets/examples/img2.png)
+![](assets/examples/img3.png)
+
+---
+Test
 **Meow :3**
 https://devvie.cc
