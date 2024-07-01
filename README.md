@@ -171,6 +171,6 @@ You could also just use an empty table instead of `pixelbox.make_canvas` but tha
 ![](assets/examples/img3.png)
 
 ---
-Test
+
 **Meow :3**
 https://devvie.cc
