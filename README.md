@@ -171,6 +171,11 @@ You could also just use an empty table instead of `pixelbox.make_canvas` but tha
 ![](assets/examples/img3.png)
 
 ---
+### credit
+
+- [HaruCoded](https://github.com/Kariaro) for coming up with the algorithm used to minimize memory usage and speed of character lookups (Smart pep :3)
+
+---
 
 **Meow :3**
 https://devvie.cc
