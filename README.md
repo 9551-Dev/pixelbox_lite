@@ -107,7 +107,8 @@ local box = require("pixelbox").new(term.current())
 
 #### Methods
 - `pixelbox.new(window,[background])`: makes a new `box` object given a window/terminal object and an optional background color, if a color is not given the terminals current `backgroundColor` is used.
-- `pixelbox.make_canvas([source_table])`: makes a bare pixelbox canvas, this doesnt contain any values/information yet other than an OoB (Out of Bounds) metatable for handling writes outside of the canvas. Can be populated via `pixelbox.setup_canvas()`. Argument allows you to use any existing table to make the "bare" canvas, it will just attach a metatable.
+- `pixelbox.make_canvas([source_table])`: makes a bare pixelbox canvas, this doesnt contain any values/information yet other than an OoB (Out of Bounds) metatable (this metatable is actually a type of pixelbox `canvas_scanline` which has the y_position set as `"NONE"`) for handling writes outside of the canvas. Can be populated via `pixelbox.setup_canvas()`. Argument allows you to use any existing table to make the "bare" canvas, it will just attach a metatable.
+- `pixelbox.make_canvas_scanline(y_position)`: Makes a canvas scanline "object", pretty much only meant to be used internally, these objects check all of their new data writes to make sure they didnt try to write onto a floating point location, if they do. Throws an error, giving the index as the x coordinate and a y_position value given at creation value as the y coordinate.
 - `pixelbox.setup_canvas(box,bare_canvas,color)`: makes a canvas fit to be used with a specific `box` object given a box, a bare canvas and a color to fill the background/empty data with
 - `pixelbox.restore(box,color,[keep_existing])`: either (depending on keep_existing, true doesnt make a completely freash canvas) gives a `box` object a completely new canvas given a color or completely rewrites existing one (used portion) with a given color
 

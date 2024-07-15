@@ -169,16 +169,32 @@ local function generate_lookups()
     end
 end
 
+function pixelbox.make_canvas_scanline(y_coord)
+    return setmetatable({},{__newindex=function(self,key,value)
+        if type(key) == "number" and key%1 ~= 0 then
+            error(("Tried to write a float pixel. x:%s y:%s"):format(key,y_coord),2)
+        else rawset(self,key,value) end
+    end})
+end
+
 function pixelbox.make_canvas(source_table)
-    local dummy_OOB = {}
-    return setmetatable(source_table or {},{__index=function()
+    local dummy_OOB = pixelbox.make_canvas_scanline("NONE")
+    local dummy_mt  = getmetatable(dummy_OOB)
+
+    function dummy_mt.tostring() return "pixelbox_dummy_oob" end
+
+    return setmetatable(source_table or {},{__index=function(self,key)
+        if type(key) == "number" and key%1 ~= 0 then
+            error(("Tried to write float scanline. y:%s"):format(key),2)
+        end
+
         return dummy_OOB
     end})
 end
 
 function pixelbox.setup_canvas(box,canvas_blank,color)
     for y=1,box.height do
-        if not rawget(canvas_blank,y) then rawset(canvas_blank,y,{}) end
+        if not rawget(canvas_blank,y) then rawset(canvas_blank,y,pixelbox.make_canvas_scanline(y)) end
 
         for x=1,box.width do
             canvas_blank[y][x] = color
