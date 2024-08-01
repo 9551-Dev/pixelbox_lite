@@ -1,5 +1,6 @@
-local pixelbox = {initialized=false}
+local pixelbox = {initialized=false,shared_data={}}
 
+pixelbox.url     = "https://pixels.devvie.cc"
 pixelbox.license = [[MIT License
 
 Copyright (c) 2024 9551Dev
@@ -343,15 +344,76 @@ function box_object:analyze_buffer()
     return true
 end
 
-function pixelbox.new(terminal,bg)
-    local box = {}
+function pixelbox.module_error(module,str,level,supress_error)
+    level = level or 1
+
+    if module.contact and not supress_error then
+        local _,err_msg = pcall(error,str,level+2)
+        printError(err_msg)
+        error((module.report_msg or "\nReport module issue at:\n-> %s"):format(module.contact),0)
+    elseif not supress_error then
+        error(str,level+1)
+    end
+end
+
+function box_object:load_module(modules)
+    for k,module in ipairs(modules or {}) do
+        local module_fields,magic_methods = module.init(self,module,pixelbox,pixelbox.shared_data,pixelbox.initialized)
+
+        magic_methods = magic_methods or {}
+
+        local module_data = {
+            author     = module.author,
+            name       = module.name,
+            contact    = module.contact,
+            report_msg = module.report_msg,
+            fn         = module_fields
+        }
+
+        if self.modules[module.id] and not modules.force then
+            pixelbox.module_error(module_data,("Module ID conflict: %q"):format(module.id),2,modules.supress)
+        else
+            self.modules[module.id] = module_data
+            if magic_methods.verified_load then
+                magic_methods.verified_load()
+            end
+        end
+
+        for fn_name,fn in pairs(module_fields) do
+            if self.modules.module_functions[fn_name] and not modules.force then
+                pixelbox.module_error(module_data,("Module %q tried to register already existing element: %q"):format(module.id,fn_name),2,modules.supress)
+            else
+                self.modules.module_functions[fn_name] = {
+                    id   = module.id,
+                    name = fn_name
+                }
+            end
+        end
+    end
+end
+
+function pixelbox.new(terminal,bg,modules)
+    local box = {
+        modules = {module_functions={}}
+    }
 
     box.background = bg or terminal.getBackgroundColor()
 
     local w,h = terminal.getSize()
     box.term  = terminal
 
-    setmetatable(box,{__index = box_object})
+    setmetatable(box,{__index = function(self,key)
+        local module_fn = rawget(box.modules.module_functions,key)
+        if module_fn then
+            return box.modules[module_fn.id].fn[module_fn.name]
+        end
+
+        return rawget(box_object,key)
+    end})
+
+    if type(modules) == "table" then
+        box:load_module(modules)
+    end
 
     box.term_width  = w
     box.term_height = h
