@@ -12,8 +12,9 @@ in CC:T.
 
 Its main objective is to be
 - **very fast**
-- lightweight (minified fits into under 4kB)
+- lightweight (minified fits into under 5kB)
 - easy to use/integrate
+- modular (provides a way to load modules, and for modules to be created)
 - flexible (in terms of what you can actually have it do)
 - display quality (there are some extra snippets for denoising)
 
