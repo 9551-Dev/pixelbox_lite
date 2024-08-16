@@ -387,16 +387,16 @@ function pixelbox.new(terminal,bg,modules)
         return rawget(box_object,key)
     end})
 
-    if type(modules) == "table" then
-        box:load_module(modules)
-    end
-
     box.term_width  = w
     box.term_height = h
     box.width       = w*2
     box.height      = h*3
 
     pixelbox.restore(box,box.background)
+
+    if type(modules) == "table" then
+        box:load_module(modules)
+    end
 
     if not pixelbox.initialized then
         generate_lookups()

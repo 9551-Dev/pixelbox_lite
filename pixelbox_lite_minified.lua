@@ -65,8 +65,8 @@ e.new(Ra,Da,La)local Ua={modules={module_functions={}}}Ua.background=Da or
 Ra.getBackgroundColor()local Ca,Ma=Ra.getSize()Ua.term=Ra
 setmetatable(Ua,{__index=function(Fa,Wa)local
 Ya=rawget(Ua.modules.module_functions,Wa)if Ya then return
-Ua.modules[Ya.id].__fn[Ya.name]end return rawget(t,Wa)end})if
-type(La)=="table"then Ua:load_module(La)end Ua.term_width=Ca Ua.term_height=Ma
-Ua.width=Ca*2 Ua.height=Ma*3 e.restore(Ua,Ua.background)if not e.initialized
+Ua.modules[Ya.id].__fn[Ya.name]end return rawget(t,Wa)end}) Ua.term_width=Ca Ua.term_height=Ma
+Ua.width=Ca*2 Ua.height=Ma*3 e.restore(Ua,Ua.background) if
+type(La)=="table"then Ua:load_module(La)end if not e.initialized
 then X()e.initialized=true end return Ua end return
 e
