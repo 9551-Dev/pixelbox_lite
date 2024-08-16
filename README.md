@@ -154,7 +154,7 @@ box:load_module{
 - `box:set_pixel(x,y,color)`: function for setting colors in the canvas, i have no idea why you would use this. Essentially box.canvas[y][x] = color
 - `box:set_canvas(canvas)`: easily allows you to swap the boxes canvas given one.
 - `box:resize(w,h,color)`: recalculates width/height values and rewrites the canvas to a new given size, filling it with a given color or `box.background` if one is not given
-- ~~**`box:analyze_buffer()`**: reads all the data in the `canvas` which is meant to be used with the current setting, checks for canvas, scanline, pixel and color value validity, throws an error if something is invalid. **Returns true on all checks passed**~~ deprecated, moved into its own separate module PB_MODULE:analyzer
+- ~~**`box:analyze_buffer()`**: reads all the data in the `canvas` which is meant to be used with the current setting, checks for canvas, scanline, pixel and color value validity, throws an error if something is invalid. **Returns true on all checks passed**~~ deprecated, moved into its own separate module [PB_MODULE:analyzer](https://github.com/9551-Dev/pixelbox_modules?tab=readme-ov-file#pixelbox-analyzer)
 
 ## More complex usage
 just to show what you can do, i will take previous H example but setup the canvas completely by hand
