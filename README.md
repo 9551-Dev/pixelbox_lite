@@ -18,7 +18,7 @@ Its main objective is to be
 - flexible (in terms of what you can actually have it do)
 - display quality (there are some extra snippets for denoising)
 
-With pixelbox lite you can technically get 6x more pixels out of your terminal, each character can now be a block of 3x2 chars
+With pixelbox lite you can technically get 6x more pixels out of your terminal, each character can now be a block of 3x2 pixels
 
 Here you can see the same terminal resolution (default computer: 51x19 chars) being filled with random colors, without and with pixelbox
 
@@ -30,6 +30,11 @@ Installing is a very simple as its just a singular file
 ```
 wget https://raw.githubusercontent.com/9551-Dev/pixelbox_lite/master/pixelbox_lite.lua
 ```
+
+## Modularity
+Some info about the modularity of pixelbox can be found [here](#modules)
+
+For a list of modules and info about them you can check out https://github.com/9551-Dev/pixelbox_modules
 
 ## Basic usage
 As for the usage its pretty simple to get started
@@ -149,7 +154,7 @@ box:load_module{
 - `box:set_pixel(x,y,color)`: function for setting colors in the canvas, i have no idea why you would use this. Essentially box.canvas[y][x] = color
 - `box:set_canvas(canvas)`: easily allows you to swap the boxes canvas given one.
 - `box:resize(w,h,color)`: recalculates width/height values and rewrites the canvas to a new given size, filling it with a given color or `box.background` if one is not given
-- **`box:analyze_buffer()`**: reads all the data in the `canvas` which is meant to be used with the current setting, checks for canvas, scanline, pixel and color value validity, throws an error if something is invalid. **Returns true on all checks passed**
+- ~~**`box:analyze_buffer()`**: reads all the data in the `canvas` which is meant to be used with the current setting, checks for canvas, scanline, pixel and color value validity, throws an error if something is invalid. **Returns true on all checks passed**~~ deprecated, moved into its own separate module PB_MODULE:analyzer
 
 ## More complex usage
 just to show what you can do, i will take previous H example but setup the canvas completely by hand

@@ -47,24 +47,26 @@ t:clear(ca)e.restore(self,h[ca or""]and ca or self.background,true)end function
 t:set_pixel(ma,fa,wa)self.canvas[fa][ma]=wa end function
 t:set_canvas(ya)self.canvas=ya self.CANVAS=ya end function
 t:resize(pa,va,ba)self.term_width=pa self.term_height=va self.width=pa*2
-self.height=va*3 e.restore(self,ba or self.background,true)end
-function e.module_error(za,Ea,Ta,Aa)Ta=Ta or 1 if za.contact and not Aa then local
-Oa,Ia=pcall(error,Ea,Ta+2)printError(Ia)error((za.report_msg
-or"\nReport module issue at:\n-> %s"):format(za.contact),0)elseif not Aa then
-error(Ea,Ta+1)end end function t:load_module(Na)for Sa,Ha in ipairs(Na or{})do
-local Ra,Da=Ha.init(self,Ha,e,e.shared_data,e.initialized)Da=Da or{}local
-La={author=Ha.author,name=Ha.name,contact=Ha.contact,report_msg=Ha.report_msg,fn=Ra}if
-self.modules[Ha.id]and not Na.force then
-e.module_error(La,("Module ID conflict: %q"):format(Ha.id),2,Na.supress)else
-self.modules[Ha.id]=La if Da.verified_load then Da.verified_load()end end for
-Ua,Ca in pairs(Ra)do if self.modules.module_functions[Ua]and not Na.force then
-e.module_error(La,("Module %q tried to register already existing element: %q"):format(Ha.id,Ua),2,Na.supress)else
-self.modules.module_functions[Ua]={id=Ha.id,name=Ua}end end end end function
-e.new(Ma,Fa,Wa)local Ya={modules={module_functions={}}}Ya.background=Fa or
-Ma.getBackgroundColor()local Pa,Va=Ma.getSize()Ya.term=Ma
-setmetatable(Ya,{__index=function(Ba,Ga)local
-Ka=rawget(Ya.modules.module_functions,Ga)if Ka then return
-Ya.modules[Ka.id].fn[Ka.name]end return rawget(t,Ga)end})if
-type(Wa)=="table"then Ya:load_module(Wa)end Ya.term_width=Pa Ya.term_height=Va
-Ya.width=Pa*2 Ya.height=Va*3 e.restore(Ya,Ya.background)if not e.initialized
-then X()e.initialized=true end return Ya end return e
+self.height=va*3 e.restore(self,ba or self.background,true)end function
+e.module_error(ga,ka,qa,ja)qa=qa or 1 if ga.__contact and not ja then local
+xa,za=pcall(error,ka,qa+2)printError(za)error((ga.__report_msg
+or"\nReport module issue at:\n-> __contact"):gsub("[%w_]+",ga),0)elseif not ja
+then error(ka,qa+1)end end function t:load_module(Ea)for Ta,Aa in ipairs(Ea
+or{})do local
+Oa={__author=Aa.author,__name=Aa.name,__contact=Aa.contact,__report_msg=Aa.report_msg}local
+Ia,Na=Aa.init(self,Oa,e,e.shared_data,e.initialized,Ea.supress)Na=Na
+or{}Oa.__fn=Ia if self.modules[Aa.id]and not Ea.force then
+e.module_error(Oa,("Module ID conflict: %q"):format(Aa.id),2,Ea.supress)else
+self.modules[Aa.id]=Oa if Na.verified_load then Na.verified_load()end end for
+Sa,Ha in pairs(Ia)do if self.modules.module_functions[Sa]and not Ea.force then
+e.module_error(Oa,("Module %q tried to register already existing element: %q"):format(Aa.id,Sa),2,Ea.supress)else
+self.modules.module_functions[Sa]={id=Aa.id,name=Sa}end end end end function
+e.new(Ra,Da,La)local Ua={modules={module_functions={}}}Ua.background=Da or
+Ra.getBackgroundColor()local Ca,Ma=Ra.getSize()Ua.term=Ra
+setmetatable(Ua,{__index=function(Fa,Wa)local
+Ya=rawget(Ua.modules.module_functions,Wa)if Ya then return
+Ua.modules[Ya.id].__fn[Ya.name]end return rawget(t,Wa)end})if
+type(La)=="table"then Ua:load_module(La)end Ua.term_width=Ca Ua.term_height=Ma
+Ua.width=Ca*2 Ua.height=Ma*3 e.restore(Ua,Ua.background)if not e.initialized
+then X()e.initialized=true end return Ua end return
+e

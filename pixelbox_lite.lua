@@ -319,38 +319,13 @@ function box_object:resize(w,h,color)
     pixelbox.restore(self,color or self.background,true)
 end
 
-function box_object:analyze_buffer()
-    local canvas = self.canvas
-    if not canvas then
-        error("Box missing canvas. Possible to regenerate with\n\npixelbox.restore(box,box.background)",0)
-    end
-
-    for y=1,self.height do
-        local row = canvas[y]
-        if not row then
-            error(("Box is missing a pixel row: %d"):format(y),0)
-        end
-
-        for x=1,self.width do
-            local pixel = row[x]
-            if not pixel then
-                error(("Box is missing a pixel at:\n\nx:%d y:%d"):format(x,y),0)
-            elseif not to_blit[pixel] then
-                error(("Box has an invalid pixel at:\n\nx:%d y:%d. Value: %s"):format(x,y,pixel),0)
-            end
-        end
-    end
-
-    return true
-end
-
 function pixelbox.module_error(module,str,level,supress_error)
     level = level or 1
 
-    if module.contact and not supress_error then
+    if module.__contact and not supress_error then
         local _,err_msg = pcall(error,str,level+2)
         printError(err_msg)
-        error((module.report_msg or "\nReport module issue at:\n-> %s"):format(module.contact),0)
+        error((module.__report_msg or "\nReport module issue at:\n-> __contact"):gsub("[%w_]+",module),0)
     elseif not supress_error then
         error(str,level+1)
     end
@@ -358,17 +333,18 @@ end
 
 function box_object:load_module(modules)
     for k,module in ipairs(modules or {}) do
-        local module_fields,magic_methods = module.init(self,module,pixelbox,pixelbox.shared_data,pixelbox.initialized)
-
-        magic_methods = magic_methods or {}
-
         local module_data = {
-            author     = module.author,
-            name       = module.name,
-            contact    = module.contact,
-            report_msg = module.report_msg,
-            fn         = module_fields
+            __author     = module.author,
+            __name       = module.name,
+            __contact    = module.contact,
+            __report_msg = module.report_msg
         }
+
+        local module_fields,magic_methods = module.init(self,module_data,pixelbox,pixelbox.shared_data,pixelbox.initialized,modules.supress)
+
+        magic_methods    = magic_methods or {}
+        module_data.__fn = module_fields
+
 
         if self.modules[module.id] and not modules.force then
             pixelbox.module_error(module_data,("Module ID conflict: %q"):format(module.id),2,modules.supress)
@@ -405,7 +381,7 @@ function pixelbox.new(terminal,bg,modules)
     setmetatable(box,{__index = function(self,key)
         local module_fn = rawget(box.modules.module_functions,key)
         if module_fn then
-            return box.modules[module_fn.id].fn[module_fn.name]
+            return box.modules[module_fn.id].__fn[module_fn.name]
         end
 
         return rawget(box_object,key)
