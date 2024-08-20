@@ -340,7 +340,7 @@ function box_object:load_module(modules)
             __report_msg = module.report_msg
         }
 
-        local module_fields,magic_methods = module.init(self,module_data,pixelbox,pixelbox.shared_data,pixelbox.initialized,modules.supress)
+        local module_fields,magic_methods = module.init(self,module_data,pixelbox,pixelbox.shared_data,pixelbox.initialized,modules)
 
         magic_methods    = magic_methods or {}
         module_data.__fn = module_fields

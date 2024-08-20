@@ -54,7 +54,7 @@ or"\nReport module issue at:\n-> __contact"):gsub("[%w_]+",ga),0)elseif not ja
 then error(ka,qa+1)end end function t:load_module(Ea)for Ta,Aa in ipairs(Ea
 or{})do local
 Oa={__author=Aa.author,__name=Aa.name,__contact=Aa.contact,__report_msg=Aa.report_msg}local
-Ia,Na=Aa.init(self,Oa,e,e.shared_data,e.initialized,Ea.supress)Na=Na
+Ia,Na=Aa.init(self,Oa,e,e.shared_data,e.initialized,Ea)Na=Na
 or{}Oa.__fn=Ia if self.modules[Aa.id]and not Ea.force then
 e.module_error(Oa,("Module ID conflict: %q"):format(Aa.id),2,Ea.supress)else
 self.modules[Aa.id]=Oa if Na.verified_load then Na.verified_load()end end for
