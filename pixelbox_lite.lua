@@ -1,4 +1,4 @@
-local pixelbox = {initialized=false,shared_data={}}
+local pixelbox = {initialized=false,shared_data={},internal={}}
 
 pixelbox.url     = "https://pixels.devvie.cc"
 pixelbox.license = [[MIT License
@@ -41,6 +41,13 @@ local texel_character_lookup  = {}
 local texel_foreground_lookup = {}
 local texel_background_lookup = {}
 local to_blit = {}
+
+pixelbox.internal.texel_character_lookup  = texel_character_lookup
+pixelbox.internal.texel_foreground_lookup = texel_foreground_lookup
+pixelbox.internal.texel_background_lookup = texel_background_lookup
+
+pixelbox.internal.to_blit_lookup  = to_blit
+pixelbox.internal.sampling_lookup = sampling_lookup
 
 local function generate_identifier(s1,s2,s3,s4,s5,s6)
     return  s2 * 1 +
@@ -170,6 +177,11 @@ local function generate_lookups()
     end
 end
 
+pixelbox.internal.generate_lookups = generate_lookups
+pixelbox.internal.calculate_texel  = calculate_texel
+pixelbox.internal.make_pattern_id  = generate_identifier
+pixelbox.internal.base_n_rshift    = base_n_rshift
+
 function pixelbox.make_canvas_scanline(y_coord)
     return setmetatable({},{__newindex=function(self,key,value)
         if type(key) == "number" and key%1 ~= 0 then
@@ -193,12 +205,22 @@ function pixelbox.make_canvas(source_table)
     end})
 end
 
-function pixelbox.setup_canvas(box,canvas_blank,color)
+function pixelbox.setup_canvas(box,canvas_blank,color,keep_existing)
     for y=1,box.height do
-        if not rawget(canvas_blank,y) then rawset(canvas_blank,y,pixelbox.make_canvas_scanline(y)) end
+
+        local scanline
+        if not rawget(canvas_blank,y) then
+            scanline = pixelbox.make_canvas_scanline(y)
+
+            rawset(canvas_blank,y,scanline)
+        else
+            scanline = canvas_blank[y]
+        end
 
         for x=1,box.width do
-            canvas_blank[y][x] = color
+            if not (scanline[x] and keep_existing) then
+                scanline[x] = color
+            end
         end
     end
 
@@ -212,7 +234,7 @@ function pixelbox.restore(box,color,keep_existing)
         box.canvas = new_canvas
         box.CANVAS = new_canvas
     else
-        pixelbox.setup_canvas(box,box.canvas,color)
+        pixelbox.setup_canvas(box,box.canvas,color,true)
     end
 end
 
