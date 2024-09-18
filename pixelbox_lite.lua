@@ -37,9 +37,9 @@ local sampling_lookup = {
     {4,5,2,3,1}
 }
 
-local texel_character_lookup  = {}
-local texel_foreground_lookup = {}
-local texel_background_lookup = {}
+local texel_character_lookup  = load("return {"..string.rep("false,",599).."[0]=false}","=preload","t")()
+local texel_foreground_lookup = load("return {"..string.rep("false,",599).."[0]=false}","=preload","t")()
+local texel_background_lookup = load("return {"..string.rep("false,",599).."[0]=false}","=preload","t")()
 local to_blit = {}
 
 pixelbox.internal.texel_character_lookup  = texel_character_lookup
