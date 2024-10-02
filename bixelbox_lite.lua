@@ -26,9 +26,8 @@ SOFTWARE.
 
 local box_object = {}
 
-local t_cat  = table.concat
-
 local to_blit = {}
+local t_cat   = table.concat
 
 local function generate_lookups()
     for i = 0, 15 do
