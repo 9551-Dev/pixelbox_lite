@@ -196,7 +196,7 @@ function pixelbox.make_canvas(source_table)
 
     function dummy_mt.tostring() return "pixelbox_dummy_oob" end
 
-    return setmetatable(source_table or {},{__index=function(self,key)
+    return setmetatable(source_table or {},{__index=function(_,key)
         if type(key) == "number" and key%1 ~= 0 then
             error(("Tried to write float scanline. y:%s"):format(key),2)
         end
@@ -241,8 +241,8 @@ end
 local color_lookup  = {}
 local texel_body    = {0,0,0,0,0,0}
 function box_object:render()
-    local t = self.term
-    local blit_line,set_cursor = t.blit,t.setCursorPos
+    local term = self.term
+    local blit_line,set_cursor = term.blit,term.setCursorPos
 
     local canv = self.canvas
 
@@ -377,7 +377,7 @@ function box_object:load_module(modules)
             end
         end
 
-        for fn_name,fn in pairs(module_fields) do
+        for fn_name in pairs(module_fields) do
             if self.modules.module_functions[fn_name] and not modules.force then
                 pixelbox.module_error(module_data,("Module %q tried to register already existing element: %q"):format(module.id,fn_name),2,modules.supress)
             else
@@ -408,6 +408,8 @@ function pixelbox.new(terminal,bg,modules)
 
         return rawget(box_object,key)
     end})
+
+    box.__pixelbox_lite = true
 
     box.term_width  = w
     box.term_height = h

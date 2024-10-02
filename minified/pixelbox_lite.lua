@@ -64,15 +64,15 @@ Sa,Ha=Ia.init(self,Na,e,e.shared_data,e.initialized,Aa)Ha=Ha or{}Na.__fn=Sa if
 self.modules[Ia.id]and not Aa.force then
 e.module_error(Na,("Module ID conflict: %q"):format(Ia.id),2,Aa.supress)else
 self.modules[Ia.id]=Na if Ha.verified_load then Ha.verified_load()end end for
-Ra,Da in pairs(Sa)do if self.modules.module_functions[Ra]and not Aa.force then
+Ra in pairs(Sa)do if self.modules.module_functions[Ra]and not Aa.force then
 e.module_error(Na,("Module %q tried to register already existing element: %q"):format(Ia.id,Ra),2,Aa.supress)else
 self.modules.module_functions[Ra]={id=Ia.id,name=Ra}end end end end function
-e.new(La,Ua,Ca)local Ma={modules={module_functions={}}}Ma.background=Ua or
-La.getBackgroundColor()local Fa,Wa=La.getSize()Ma.term=La
-setmetatable(Ma,{__index=function(Ya,Pa)local
-Va=rawget(Ma.modules.module_functions,Pa)if Va then return
-Ma.modules[Va.id].__fn[Va.name]end return rawget(t,Pa)end})Ma.term_width=Fa
-Ma.term_height=Wa Ma.width=Fa*2 Ma.height=Wa*3 e.restore(Ma,Ma.background)if
-type(Ca)=="table"then Ma:load_module(Ca)end if not e.initialized then
-X()e.initialized=true end return Ma end return
-e
+e.new(Da,La,Ua)local Ca={modules={module_functions={}}}Ca.background=La or
+Da.getBackgroundColor()local Ma,Fa=Da.getSize()Ca.term=Da
+setmetatable(Ca,{__index=function(Wa,Ya)local
+Pa=rawget(Ca.modules.module_functions,Ya)if Pa then return
+Ca.modules[Pa.id].__fn[Pa.name]end return
+rawget(t,Ya)end})Ca.__pixelbox_lite=true Ca.term_width=Ma Ca.term_height=Fa
+Ca.width=Ma*2 Ca.height=Fa*3 e.restore(Ca,Ca.background)if
+type(Ua)=="table"then Ca:load_module(Ua)end if not e.initialized then
+X()e.initialized=true end return Ca end return e
