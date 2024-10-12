@@ -37,9 +37,9 @@ local sampling_lookup = {
     {4,5,2,3,1}
 }
 
-local texel_character_lookup  = load("return {"..string.rep("false,",599).."[0]=false}","=preload","t")()
-local texel_foreground_lookup = load("return {"..string.rep("false,",599).."[0]=false}","=preload","t")()
-local texel_background_lookup = load("return {"..string.rep("false,",599).."[0]=false}","=preload","t")()
+local texel_character_lookup  = load("return {"..string.rep("false,",599).."[0]=false}","=pb_preload","t")()
+local texel_foreground_lookup = load("return {"..string.rep("false,",599).."[0]=false}","=pb_preload","t")()
+local texel_background_lookup = load("return {"..string.rep("false,",599).."[0]=false}","=pb_preload","t")()
 local to_blit = {}
 
 pixelbox.internal.texel_character_lookup  = texel_character_lookup
@@ -205,7 +205,7 @@ function pixelbox.make_canvas(source_table)
     end})
 end
 
-function pixelbox.setup_canvas(box,canvas_blank,color,keep_existing)
+function pixelbox.setup_canvas(box,canvas_blank,color,keep_content)
     for y=1,box.height do
 
         local scanline
@@ -218,7 +218,7 @@ function pixelbox.setup_canvas(box,canvas_blank,color,keep_existing)
         end
 
         for x=1,box.width do
-            if not (scanline[x] and keep_existing) then
+            if not (scanline[x] and keep_content) then
                 scanline[x] = color
             end
         end
@@ -227,14 +227,14 @@ function pixelbox.setup_canvas(box,canvas_blank,color,keep_existing)
     return canvas_blank
 end
 
-function pixelbox.restore(box,color,keep_existing)
+function pixelbox.restore(box,color,keep_existing,keep_content)
     if not keep_existing then
         local new_canvas = pixelbox.setup_canvas(box,pixelbox.make_canvas(),color)
 
         box.canvas = new_canvas
         box.CANVAS = new_canvas
     else
-        pixelbox.setup_canvas(box,box.canvas,color,true)
+        pixelbox.setup_canvas(box,box.canvas,color,keep_content)
     end
 end
 
@@ -248,7 +248,8 @@ function box_object:render()
 
     local char_line,fg_line,bg_line = {},{},{}
 
-    local width,height = self.width,self.height
+    local x_offset,y_offset = self.x_offset,self.y_offset
+    local width,height      = self.width,   self.height
 
     local sy = 0
     for y=1,height,3 do
@@ -310,7 +311,7 @@ function box_object:render()
             bg_line  [n] = to_blit[bg]
         end
 
-        set_cursor(1,sy)
+        set_cursor(1+x_offset,sy+y_offset)
         blit_line(
             t_cat(char_line,""),
             t_cat(fg_line,  ""),
@@ -320,7 +321,7 @@ function box_object:render()
 end
 
 function box_object:clear(color)
-    pixelbox.restore(self,to_blit[color or ""] and color or self.background,true)
+    pixelbox.restore(self,to_blit[color or ""] and color or self.background,true,false)
 end
 
 function box_object:set_pixel(x,y,color)
@@ -333,12 +334,12 @@ function box_object:set_canvas(canvas)
 end
 
 function box_object:resize(w,h,color)
-    self.term_width  = w
-    self.term_height = h
-    self.width  = w*2
-    self.height = h*3
+    self.term_width  = math.floor(w+0.5)
+    self.term_height = math.floor(h+0.5)
+    self.width       = math.floor(w+0.5)*2
+    self.height      = math.floor(h+0.5)*3
 
-    pixelbox.restore(self,color or self.background,true)
+    pixelbox.restore(self,color or self.background,true,true)
 end
 
 function pixelbox.module_error(module,str,level,supress_error)
@@ -400,7 +401,7 @@ function pixelbox.new(terminal,bg,modules)
     local w,h = terminal.getSize()
     box.term  = terminal
 
-    setmetatable(box,{__index = function(self,key)
+    setmetatable(box,{__index = function(_,key)
         local module_fn = rawget(box.modules.module_functions,key)
         if module_fn then
             return box.modules[module_fn.id].__fn[module_fn.name]
@@ -415,6 +416,9 @@ function pixelbox.new(terminal,bg,modules)
     box.term_height = h
     box.width       = w*2
     box.height      = h*3
+
+    box.x_offset = 0
+    box.y_offset = 0
 
     pixelbox.restore(box,box.background)
 

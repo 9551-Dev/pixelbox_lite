@@ -61,7 +61,7 @@ function pixelbox.make_canvas(source_table)
     end})
 end
 
-function pixelbox.setup_canvas(box,canvas_blank,color,keep_existing)
+function pixelbox.setup_canvas(box,canvas_blank,color,keep_content)
     for y=1,box.height do
 
         local scanline
@@ -74,7 +74,7 @@ function pixelbox.setup_canvas(box,canvas_blank,color,keep_existing)
         end
 
         for x=1,box.width do
-            if not (scanline[x] and keep_existing) then
+            if not (scanline[x] and keep_content) then
                 scanline[x] = color
             end
         end
@@ -83,14 +83,14 @@ function pixelbox.setup_canvas(box,canvas_blank,color,keep_existing)
     return canvas_blank
 end
 
-function pixelbox.restore(box,color,keep_existing)
+function pixelbox.restore(box,color,keep_existing,keep_content)
     if not keep_existing then
         local new_canvas = pixelbox.setup_canvas(box,pixelbox.make_canvas(),color)
 
         box.canvas = new_canvas
         box.CANVAS = new_canvas
     else
-        pixelbox.setup_canvas(box,box.canvas,color,true)
+        pixelbox.setup_canvas(box,box.canvas,color,keep_content)
     end
 end
 
@@ -99,12 +99,15 @@ function box_object:render()
     local term = self.term
     local blit_line,set_cursor = term.blit,term.setCursorPos
 
+    local term_height = self.term_height
+
     local canv = self.canvas
 
     local fg_line_1,bg_line_1 = {},{}
     local fg_line_2,bg_line_2 = {},{}
 
-    local width,height = self.width,self.height
+    local x_offset,y_offset = self.x_offset,self.y_offset
+    local width,height      = self.width,   self.height
 
     local even_char_line = string_rep("\131",width)
     local odd_char_line  = string_rep("\143",width)
@@ -124,28 +127,30 @@ function box_object:render()
 
             fg_line_1  [n] = to_blit[color1]
             bg_line_1  [n] = to_blit[color2]
-            fg_line_2  [n] = to_blit[color2 or color2]
+            fg_line_2  [n] = to_blit[color2]
             bg_line_2  [n] = to_blit[color3 or color2]
 
             n = n + 1
         end
 
-        set_cursor(1,sy-1)
+        set_cursor(1+x_offset,y_offset+sy-1)
         blit_line(odd_char_line,
             t_cat(fg_line_1,""),
             t_cat(bg_line_1,"")
         )
 
-        set_cursor(1,sy)
-        blit_line(even_char_line,
-            t_cat(fg_line_2,""),
-            t_cat(bg_line_2,"")
-        )
+        if sy <= term_height then
+            set_cursor(1+x_offset,y_offset+sy)
+            blit_line(even_char_line,
+                t_cat(fg_line_2,""),
+                t_cat(bg_line_2,"")
+            )
+        end
     end
 end
 
 function box_object:clear(color)
-    pixelbox.restore(self,to_blit[color or ""] and color or self.background,true)
+    pixelbox.restore(self,to_blit[color or ""] and color or self.background,true,false)
 end
 
 function box_object:set_pixel(x,y,color)
@@ -158,12 +163,12 @@ function box_object:set_canvas(canvas)
 end
 
 function box_object:resize(w,h,color)
-    self.term_width  = w
-    self.term_height = h
-    self.width  = w*2
-    self.height = h*3
+    self.term_width  = math.floor(w+0.5)
+    self.term_height = math.floor(h+0.5)
+    self.width       = math.floor(w+0.5)
+    self.height      = math.floor(h*(3/2)+0.5)
 
-    pixelbox.restore(self,color or self.background,true)
+    pixelbox.restore(self,color or self.background,true,true)
 end
 
 function pixelbox.module_error(module,str,level,supress_error)
@@ -225,7 +230,7 @@ function pixelbox.new(terminal,bg,modules)
     local w,h = terminal.getSize()
     box.term  = terminal
 
-    setmetatable(box,{__index = function(self,key)
+    setmetatable(box,{__index = function(_,key)
         local module_fn = rawget(box.modules.module_functions,key)
         if module_fn then
             return box.modules[module_fn.id].__fn[module_fn.name]
@@ -240,6 +245,9 @@ function pixelbox.new(terminal,bg,modules)
     box.term_height = h
     box.width       = w
     box.height      = math.ceil(h * (3/2))
+
+    box.x_offset = 0
+    box.y_offset = 0
 
     pixelbox.restore(box,box.background)
 

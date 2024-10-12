@@ -1,21 +1,24 @@
 local e={initialized=false,shared_data={},internal={}}local t={}local
 a=table.concat local
 o={{2,3,4,5,6},{4,1,6,3,5},{1,4,5,2,6},{2,6,3,5,1},{3,6,1,4,2},{4,5,2,3,1}}local
-i={}local n={}local s={}local h={}e.internal.texel_character_lookup=i
-e.internal.texel_foreground_lookup=n e.internal.texel_background_lookup=s
-e.internal.to_blit_lookup=h e.internal.sampling_lookup=o local function
-r(d,l,u,c,m,f)return l*1+u*3+c*4+m*20+f*100 end local function
-w(y,p,v,b,g,k)local q={y,p,v,b,g,k}local j={}for x=1,6 do local z=q[x]local
-E=j[z]j[z]=E and E+1 or 1 end local T={}for A,O in pairs(j)do
-T[#T+1]={value=A,count=O}end table.sort(T,function(I,N)return I.count>N.count
-end)local S={}for H=1,6 do local R=q[H]if R==T[1].value then S[H]=1 elseif
-R==T[2].value then S[H]=0 else local D=o[H]for L=1,5 do local U=D[L]local
-C=q[U]local M=C==T[1].value local F=C==T[2].value if M or F then S[H]=M and 1
-or 0 break end end end end local W=128 local Y=S[6]if S[1]~=Y then W=W+1 end if
-S[2]~=Y then W=W+2 end if S[3]~=Y then W=W+4 end if S[4]~=Y then W=W+8 end if
-S[5]~=Y then W=W+16 end local P,V if#T>1 then P=T[Y+1].value V=T[2-Y].value
-else P=T[1].value V=T[1].value end return W,P,V end local function
-B(G,K,Q)return math.floor(G/(K^Q))end local J=0 local function X()for Z=0,15 do
+i=load("return {"..string.rep("false,",599).."[0]=false}","=pb_preload","t")()local
+n=load("return {"..string.rep("false,",599).."[0]=false}","=pb_preload","t")()local
+s=load("return {"..string.rep("false,",599).."[0]=false}","=pb_preload","t")()local
+h={}e.internal.texel_character_lookup=i e.internal.texel_foreground_lookup=n
+e.internal.texel_background_lookup=s e.internal.to_blit_lookup=h
+e.internal.sampling_lookup=o local function r(d,l,u,c,m,f)return
+l*1+u*3+c*4+m*20+f*100 end local function w(y,p,v,b,g,k)local
+q={y,p,v,b,g,k}local j={}for x=1,6 do local z=q[x]local E=j[z]j[z]=E and E+1 or
+1 end local T={}for A,O in pairs(j)do T[#T+1]={value=A,count=O}end
+table.sort(T,function(I,N)return I.count>N.count end)local S={}for H=1,6 do
+local R=q[H]if R==T[1].value then S[H]=1 elseif R==T[2].value then S[H]=0 else
+local D=o[H]for L=1,5 do local U=D[L]local C=q[U]local M=C==T[1].value local
+F=C==T[2].value if M or F then S[H]=M and 1 or 0 break end end end end local
+W=128 local Y=S[6]if S[1]~=Y then W=W+1 end if S[2]~=Y then W=W+2 end if
+S[3]~=Y then W=W+4 end if S[4]~=Y then W=W+8 end if S[5]~=Y then W=W+16 end
+local P,V if#T>1 then P=T[Y+1].value V=T[2-Y].value else P=T[1].value
+V=T[1].value end return W,P,V end local function B(G,K,Q)return
+math.floor(G/(K^Q))end local J=0 local function X()for Z=0,15 do
 h[2^Z]=("%x"):format(Z)end for et=0,6^6 do local tt=B(et,6,0)%6 local
 at=B(et,6,1)%6 local ot=B(et,6,2)%6 local it=B(et,6,3)%6 local nt=B(et,6,4)%6
 local st=B(et,6,5)%6 local ht={}ht[st]=5 ht[nt]=4 ht[it]=3 ht[ot]=2 ht[at]=1
@@ -35,44 +38,46 @@ error(("Tried to write float scanline. y:%s"):format(qt),2)end return bt
 end})end function e.setup_canvas(jt,xt,zt,Et)for Tt=1,jt.height do local At if
 not rawget(xt,Tt)then At=e.make_canvas_scanline(Tt)rawset(xt,Tt,At)else
 At=xt[Tt]end for Ot=1,jt.width do if not(At[Ot]and Et)then At[Ot]=zt end end
-end return xt end function e.restore(It,Nt,St)if not St then local
-Ht=e.setup_canvas(It,e.make_canvas(),Nt)It.canvas=Ht It.CANVAS=Ht else
-e.setup_canvas(It,It.canvas,Nt,true)end end local Rt={}local
-Dt={0,0,0,0,0,0}function t:render()local Lt=self.term local
-Ut,Ct=Lt.blit,Lt.setCursorPos local Mt=self.canvas local Ft,Wt,Yt={},{},{}local
-Pt,Vt=self.width,self.height local Bt=0 for Gt=1,Vt,3 do Bt=Bt+1 local
-Kt=Mt[Gt]local Qt=Mt[Gt+1]local Jt=Mt[Gt+2]local Xt=0 for Zt=1,Pt,2 do local
-ea=Zt+1 local ta,aa,oa,ia,na,sa=Kt[Zt],Kt[ea],Qt[Zt],Qt[ea],Jt[Zt],Jt[ea]local
-ha,ra,da=" ",1,ta local la=aa==ta and oa==ta and ia==ta and na==ta and sa==ta
-if not la then Rt[sa]=5 Rt[na]=4 Rt[ia]=3 Rt[oa]=2 Rt[aa]=1 Rt[ta]=0 local
-ua=Rt[aa]+Rt[oa]*3+Rt[ia]*4+Rt[na]*20+Rt[sa]*100 local ca=n[ua]local
-ma=s[ua]Dt[1]=ta Dt[2]=aa Dt[3]=oa Dt[4]=ia Dt[5]=na Dt[6]=sa
-ra=Dt[ca]da=Dt[ma]ha=i[ua]end Xt=Xt+1 Ft[Xt]=ha Wt[Xt]=h[ra]Yt[Xt]=h[da]end
-Ct(1,Bt)Ut(a(Ft,""),a(Wt,""),a(Yt,""))end end function
-t:clear(fa)e.restore(self,h[fa or""]and fa or self.background,true)end function
-t:set_pixel(wa,ya,pa)self.canvas[ya][wa]=pa end function
-t:set_canvas(va)self.canvas=va self.CANVAS=va end function
-t:resize(ba,ga,ka)self.term_width=ba self.term_height=ga self.width=ba*2
-self.height=ga*3 e.restore(self,ka or self.background,true)end function
-e.module_error(qa,ja,xa,za)xa=xa or 1 if qa.__contact and not za then local
-Ea,Ta=pcall(error,ja,xa+2)printError(Ta)error((qa.__report_msg
-or"\nReport module issue at:\n-> __contact"):gsub("[%w_]+",qa),0)elseif not za
-then error(ja,xa+1)end end function t:load_module(Aa)for Oa,Ia in ipairs(Aa
+end return xt end function e.restore(It,Nt,St,Ht)if not St then local
+Rt=e.setup_canvas(It,e.make_canvas(),Nt)It.canvas=Rt It.CANVAS=Rt else
+e.setup_canvas(It,It.canvas,Nt,Ht)end end local Dt={}local
+Lt={0,0,0,0,0,0}function t:render()local Ut=self.term local
+Ct,Mt=Ut.blit,Ut.setCursorPos local Ft=self.canvas local Wt,Yt,Pt={},{},{}local
+Vt,Bt=self.x_offset,self.y_offset local Gt,Kt=self.width,self.height local Qt=0
+for Jt=1,Kt,3 do Qt=Qt+1 local Xt=Ft[Jt]local Zt=Ft[Jt+1]local ea=Ft[Jt+2]local
+ta=0 for aa=1,Gt,2 do local oa=aa+1 local
+ia,na,sa,ha,ra,da=Xt[aa],Xt[oa],Zt[aa],Zt[oa],ea[aa],ea[oa]local
+la,ua,ca=" ",1,ia local ma=na==ia and sa==ia and ha==ia and ra==ia and da==ia
+if not ma then Dt[da]=5 Dt[ra]=4 Dt[ha]=3 Dt[sa]=2 Dt[na]=1 Dt[ia]=0 local
+fa=Dt[na]+Dt[sa]*3+Dt[ha]*4+Dt[ra]*20+Dt[da]*100 local wa=n[fa]local
+ya=s[fa]Lt[1]=ia Lt[2]=na Lt[3]=sa Lt[4]=ha Lt[5]=ra Lt[6]=da
+ua=Lt[wa]ca=Lt[ya]la=i[fa]end ta=ta+1 Wt[ta]=la Yt[ta]=h[ua]Pt[ta]=h[ca]end
+Mt(1+Vt,Qt+Bt)Ct(a(Wt,""),a(Yt,""),a(Pt,""))end end function
+t:clear(pa)e.restore(self,h[pa or""]and pa or self.background,true,false)end
+function t:set_pixel(va,ba,ga)self.canvas[ba][va]=ga end function
+t:set_canvas(ka)self.canvas=ka self.CANVAS=ka end function
+t:resize(qa,ja,xa)self.term_width=math.floor(qa+0.5)self.term_height=math.floor(ja+0.5)self.width=math.floor(qa+0.5)*2
+self.height=math.floor(ja+0.5)*3 e.restore(self,xa or
+self.background,true,true)end function e.module_error(za,Ea,Ta,Aa)Ta=Ta or 1 if
+za.__contact and not Aa then local
+Oa,Ia=pcall(error,Ea,Ta+2)printError(Ia)error((za.__report_msg
+or"\nReport module issue at:\n-> __contact"):gsub("[%w_]+",za),0)elseif not Aa
+then error(Ea,Ta+1)end end function t:load_module(Na)for Sa,Ha in ipairs(Na
 or{})do local
-Na={__author=Ia.author,__name=Ia.name,__contact=Ia.contact,__report_msg=Ia.report_msg}local
-Sa,Ha=Ia.init(self,Na,e,e.shared_data,e.initialized,Aa)Ha=Ha or{}Na.__fn=Sa if
-self.modules[Ia.id]and not Aa.force then
-e.module_error(Na,("Module ID conflict: %q"):format(Ia.id),2,Aa.supress)else
-self.modules[Ia.id]=Na if Ha.verified_load then Ha.verified_load()end end for
-Ra in pairs(Sa)do if self.modules.module_functions[Ra]and not Aa.force then
-e.module_error(Na,("Module %q tried to register already existing element: %q"):format(Ia.id,Ra),2,Aa.supress)else
-self.modules.module_functions[Ra]={id=Ia.id,name=Ra}end end end end function
-e.new(Da,La,Ua)local Ca={modules={module_functions={}}}Ca.background=La or
-Da.getBackgroundColor()local Ma,Fa=Da.getSize()Ca.term=Da
-setmetatable(Ca,{__index=function(Wa,Ya)local
-Pa=rawget(Ca.modules.module_functions,Ya)if Pa then return
-Ca.modules[Pa.id].__fn[Pa.name]end return
-rawget(t,Ya)end})Ca.__pixelbox_lite=true Ca.term_width=Ma Ca.term_height=Fa
-Ca.width=Ma*2 Ca.height=Fa*3 e.restore(Ca,Ca.background)if
-type(Ua)=="table"then Ca:load_module(Ua)end if not e.initialized then
-X()e.initialized=true end return Ca end return e
+Ra={__author=Ha.author,__name=Ha.name,__contact=Ha.contact,__report_msg=Ha.report_msg}local
+Da,La=Ha.init(self,Ra,e,e.shared_data,e.initialized,Na)La=La or{}Ra.__fn=Da if
+self.modules[Ha.id]and not Na.force then
+e.module_error(Ra,("Module ID conflict: %q"):format(Ha.id),2,Na.supress)else
+self.modules[Ha.id]=Ra if La.verified_load then La.verified_load()end end for
+Ua in pairs(Da)do if self.modules.module_functions[Ua]and not Na.force then
+e.module_error(Ra,("Module %q tried to register already existing element: %q"):format(Ha.id,Ua),2,Na.supress)else
+self.modules.module_functions[Ua]={id=Ha.id,name=Ua}end end end end function
+e.new(Ca,Ma,Fa)local Wa={modules={module_functions={}}}Wa.background=Ma or
+Ca.getBackgroundColor()local Ya,Pa=Ca.getSize()Wa.term=Ca
+setmetatable(Wa,{__index=function(Va,Ba)local
+Ga=rawget(Wa.modules.module_functions,Ba)if Ga then return
+Wa.modules[Ga.id].__fn[Ga.name]end return
+rawget(t,Ba)end})Wa.__pixelbox_lite=true Wa.term_width=Ya Wa.term_height=Pa
+Wa.width=Ya*2 Wa.height=Pa*3 Wa.x_offset=0 Wa.y_offset=0
+e.restore(Wa,Wa.background)if type(Fa)=="table"then Wa:load_module(Fa)end if
+not e.initialized then X()e.initialized=true end return Wa end return e
